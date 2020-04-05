@@ -163,7 +163,35 @@ const ArraySorter = {
     }
 };
 
-console.log(ArraySorter.insertionSort([1, 4, 6, 3, 2, 5, 8]));
+const Converter = {
+
+    convertToDec: function (vector, base, alphabet) {
+        let number = 0;
+        for(let i = 0; i < vector.length; i++) {
+            number += alphabet.indexOf(vector[i]) * base**i;
+        }
+
+        return number;
+    },
+
+    convert: function (vector, base, target, alphabet =
+        ['0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ']) {
+        vector.reverse();
+
+        let number = this.convertToDec(vector, base, alphabet[0]);
+        let ans = [];
+
+        while (number > 0) {
+            const character = alphabet[1][number % target];
+            ans.push(character);
+            number = number / target >> 0;
+        }
+
+        ans.reverse();
+
+        return ans;
+    }
+};
 
 function onShowHideClick() {
     const x = document.getElementById("myDIV");
