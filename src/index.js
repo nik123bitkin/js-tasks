@@ -224,23 +224,23 @@ const TextFormatter = {
                 case FormatType.wordWrap:
                     separators = [' '];
                 case FormatType.sentenceWrap:
-                    for(let i = 0; i < maxStrings && startIndex < text.length; i++) {
+                    for (let i = 0; i < maxStrings && startIndex < text.length; i++) {
                         let temp = text.slice(startIndex, startIndex + maxLength);
                         let j = temp.length - 1;
-                        for(; j > -1; j--) {
-                            if(separators.indexOf(temp[j]) !== -1) {
+                        for (; j > -1; j--) {
+                            if (separators.indexOf(temp[j]) !== -1) {
                                 break;
                             }
                         }
                         // no separators and not last chunk
-                        if(j === -1 && (startIndex + maxLength < text.length)) {
+                        if (j === -1 && (startIndex + maxLength < text.length)) {
                             throw new Error("Unable to format");
                         }
                         //if last chunk of text
-                        if(startIndex + maxLength > text.length) {
+                        if (startIndex + maxLength > text.length) {
                             newText.push(temp);
                             startIndex = text.length;
-                        }else {
+                        } else {
                             newText.push(text.slice(startIndex, startIndex + j + 1));
                             startIndex += j + 1;
                         }
@@ -274,13 +274,91 @@ const TextFormatter = {
     },
 };
 
-console.log(TextFormatter.format('abcd xy z cabcdbd', 8, 10, FormatType.wordWrap));
-
 const StringCalculator = {
-    calculate: function (string) {
-
+    delimiter: function (char) {
+        return char === ' ';
     },
+
+    isOperator: function (char) {
+        return char === '+' || char === '-' || char === '*' || char === '/' || char === '%';
+    },
+
+    isDigit: function (char) {
+        return '0123456789'.indexOf(char) !== -1;
+    },
+
+    priority: function (char) {
+        if (char < 0)
+            return 4; // op == -'+' || op == -'-' TODO: unary support
+        return char === '+' || char === '-' ? 1 :
+            char === '*' || char === '/' || char === '%' ? 2 : -1;
+    },
+
+    processOperation: function (stack, operator) {
+        if (operator < 0) {
+            let l = stack.pop();
+            switch (-operator) {
+                case '+': stack.push(l); break;
+                case '-': stack.push(-l); break;
+            }
+        } else {
+            let r = stack.pop();
+            let l = stack.pop();
+            switch (operator) {
+                case '+': stack.push(l + r); break;
+                case '-': stack.push(l - r); break;
+                case '*': stack.push(l * r); break;
+                case '/': stack.push(l / r); break;
+                case '%': stack.push(l % r); break;
+            }
+        }
+    },
+
+    calculate: function (string) {
+    let may_unary = true;
+    let st = [];
+    let op = [];
+    for (let i = 0; i < string.length; ++i)
+    if (!this.delimiter(string[i]))
+        if (string[i] === '(') {
+            op.push ('(');
+            may_unary = true;
+        }
+        else if (string[i] === ')') {
+            while (op[op.length - 1] !== '(')
+                this.processOperation (st, op.pop());
+            op.pop();
+            may_unary = false;
+        }
+        else if (this.isOperator(string[i])) {
+            let current = string[i];
+            //TODO: add unary support
+            // if (may_unary && isunary (current))
+            //     current = -current;
+            while (op.length > 0 && (
+                /* current >= 0  && */ this.priority(op[op.length - 1]) >= this.priority(current)
+                /* || current < 0 && this.priority(op[op.length - 1]) > this.priority(current) */)
+                )
+                this.processOperation (st, op.pop());
+            op.push (current);
+            may_unary = true;
+        }
+        else {
+            let operand = '';
+            //TODO: add float support
+            while (i < string.length && this.isDigit(string[i]))
+                operand += string[i++];
+            --i;
+            st.push (parseFloat(operand));
+            may_unary = false;
+        }
+        while (op.length > 0)
+            this.processOperation(st, op.pop());
+        return st[st.length - 1];
+    }
 };
+
+console.log(StringCalculator.calculate('((2+3)*4-1)/3.2'))
 
 const DateConverter = {
     convertDate: function (source, sourceFormat, targetFormat) {
