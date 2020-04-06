@@ -62,8 +62,6 @@ const ArrayTool = {
 
 };
 
-// ArrayTool
-
 const ArraySorter = {
 
     arrayLength: 0,
@@ -167,8 +165,8 @@ const Converter = {
 
     convertToDec: function (vector, base, alphabet) {
         let number = 0;
-        for(let i = 0; i < vector.length; i++) {
-            number += alphabet.indexOf(vector[i]) * base**i;
+        for (let i = 0; i < vector.length; i++) {
+            number += alphabet.indexOf(vector[i]) * base ** i;
         }
 
         return number;
@@ -191,6 +189,107 @@ const Converter = {
 
         return ans;
     }
+};
+
+const FormatType = {
+    noWrap: 0,
+    wordWrap: 1,
+    charWrap: 2,
+    sentenceWrap: 3,
+};
+
+Object.freeze(FormatType);
+
+const TextFormatter = {
+
+    separateChars: ['.', '!', '!?', '...'],
+
+    format: function (text, maxLength = 0, maxStrings = Number.MAX_SAFE_INTEGER,
+                      formatType = FormatType.noWrap) {
+        try {
+            // Max length is above text length
+            if (maxLength === 0 || maxLength > text.length) {
+                return text;
+            }
+            // length of string is less than text and no wrap allowed
+            if (maxLength < text.length && formatType === FormatType.noWrap) {
+                throw new Error("Max length of the string is less than text length and no wrap allowed");
+            }
+            //here maxlength 100% < text.length and FormatType !== nowrap
+
+            let separators = this.separateChars;
+            let newText = [];
+            let startIndex = 0;
+            switch (formatType) {
+                case FormatType.wordWrap:
+                    separators = [' '];
+                case FormatType.sentenceWrap:
+                    for(let i = 0; i < maxStrings && startIndex < text.length; i++) {
+                        let temp = text.slice(startIndex, startIndex + maxLength);
+                        let j = temp.length - 1;
+                        for(; j > -1; j--) {
+                            if(separators.indexOf(temp[j]) !== -1) {
+                                break;
+                            }
+                        }
+                        // no separators and not last chunk
+                        if(j === -1 && (startIndex + maxLength < text.length)) {
+                            throw new Error("Unable to format");
+                        }
+                        //if last chunk of text
+                        if(startIndex + maxLength > text.length) {
+                            newText.push(temp);
+                            startIndex = text.length;
+                        }else {
+                            newText.push(text.slice(startIndex, startIndex + j + 1));
+                            startIndex += j + 1;
+                        }
+                    }
+                    if (startIndex < text.length) {
+                        throw new Error("Unable to format");
+                    } else {
+                        newText = newText.join('\n');
+                        return newText;
+                    }
+                    break;
+                case FormatType.charWrap:
+                    for (let i = 0; i < maxStrings && startIndex < text.length; i++) {
+                        newText.push(text.slice(startIndex, startIndex + maxLength));
+                        startIndex += maxLength;
+                    }
+                    if (startIndex < text.length) {
+                        throw new Error("Unable to format");
+                    } else {
+                        newText = newText.join('\n');
+                        return newText;
+                    }
+                    break;
+                default:
+                    throw new Error("Smth went wrong with nowrap");
+            }
+        } catch (e) {
+            console.log(e);
+            return text;
+        }
+    },
+};
+
+console.log(TextFormatter.format('abcd xy z cabcdbd', 8, 10, FormatType.wordWrap));
+
+const StringCalculator = {
+    calculate: function (string) {
+
+    },
+};
+
+const DateConverter = {
+    convertDate: function (source, sourceFormat, targetFormat) {
+
+    },
+
+    convertTicks: function (source, targetFormat) {
+
+    },
 };
 
 function onShowHideClick() {
