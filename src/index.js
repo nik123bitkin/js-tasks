@@ -374,14 +374,34 @@ const StringCalculator = {
 };
 
 const DateConverter = {
-    convertDate: function (source, sourceFormat, targetFormat) {
 
+    month: new Map([
+        ['01', 'January'], ['02', 'February'], ['03', 'March'], ['04', 'April'],
+        ['05', 'May'], ['06', 'June'], ['07', 'July'], ['08', 'August'],
+        ['09', 'September'], ['10', 'October'], ['11', 'November'], ['12', 'December'],
+    ]),
+
+    convertDate: function (source, sourceFormat, targetFormat, isLong = false) {
+        sourceFormat = sourceFormat || 'DDMMYYYY';
+        targetFormat = targetFormat || 'DD-MM-YYYY';
+        let day = source.substr(sourceFormat.indexOf('DD'), 2);
+        let month = source.substr(sourceFormat.indexOf('MM'), 2);
+        let year = source.substr(sourceFormat.indexOf('YYYY'), 4);
+        let target = '';
+        if(isLong) {
+            target = day + ' ' + this.month.get(month) + ' ' + year;
+        }else {
+            target = targetFormat.replace('DD', day).replace('MM', month).replace('YYYY', year);
+        }
+        return target;
     },
 
     convertTicks: function (source, targetFormat) {
 
     },
 };
+
+console.log(DateConverter.convertDate('12022000', null, null, true))
 
 function onTextFormatClick() {
     let formatValue = document.querySelector('input[name="wrap"]:checked').value;
