@@ -303,66 +303,75 @@ const StringCalculator = {
             operator = operator.charAt(1);
             let l = stack.pop();
             switch (operator) {
-                case '+': stack.push(l); break;
-                case '-': stack.push(-l); break;
+                case '+':
+                    stack.push(l);
+                    break;
+                case '-':
+                    stack.push(-l);
+                    break;
             }
         } else {
             let r = stack.pop();
             let l = stack.pop();
             switch (operator) {
-                case '+': stack.push(l + r); break;
-                case '-': stack.push(l - r); break;
-                case '*': stack.push(l * r); break;
-                case '/': stack.push(l / r); break;
-                case '%': stack.push(l % r); break;
+                case '+':
+                    stack.push(l + r);
+                    break;
+                case '-':
+                    stack.push(l - r);
+                    break;
+                case '*':
+                    stack.push(l * r);
+                    break;
+                case '/':
+                    stack.push(l / r);
+                    break;
+                case '%':
+                    stack.push(l % r);
+                    break;
             }
         }
     },
 
     calculate: function (string) {
-    let mayUnary = true;
-    let stack = [];
-    let operator = [];
-    for (let i = 0; i < string.length; ++i)
-    if (!this.delimiter(string[i]))
-        if (string[i] === '(') {
-            operator.push ('(');
-            mayUnary = true;
-        }
-        else if (string[i] === ')') {
-            while (operator[operator.length - 1] !== '(')
-                this.processOperation (stack, operator.pop());
-            operator.pop();
-            mayUnary = false;
-        }
-        else if (this.isOperator(string[i])) {
-            let current = string[i];
-            if(mayUnary && this.isUnary(current)) {
-                current = '~' + current;
-            }
-            while (operator.length > 0 && (
-                current.length === 1  && this.priority(operator[operator.length - 1]) >= this.priority(current)
-                || current.length === 2 && this.priority(operator[operator.length - 1]) > this.priority(current))
-                )
-                this.processOperation (stack, operator.pop());
-            operator.push (current);
-            mayUnary = true;
-        }
-        else {
-            let operand = '';
-            while (i < string.length && this.isDigit(string[i]))
-                operand += string[i++];
-            --i;
-            stack.push (operand.indexOf('.') === -1 ? parseInt(operand) : parseFloat(operand));
-            mayUnary = false;
-        }
+        let mayUnary = true;
+        let stack = [];
+        let operator = [];
+        for (let i = 0; i < string.length; ++i)
+            if (!this.delimiter(string[i]))
+                if (string[i] === '(') {
+                    operator.push('(');
+                    mayUnary = true;
+                } else if (string[i] === ')') {
+                    while (operator[operator.length - 1] !== '(')
+                        this.processOperation(stack, operator.pop());
+                    operator.pop();
+                    mayUnary = false;
+                } else if (this.isOperator(string[i])) {
+                    let current = string[i];
+                    if (mayUnary && this.isUnary(current)) {
+                        current = '~' + current;
+                    }
+                    while (operator.length > 0 && (
+                        current.length === 1 && this.priority(operator[operator.length - 1]) >= this.priority(current)
+                        || current.length === 2 && this.priority(operator[operator.length - 1]) > this.priority(current))
+                        )
+                        this.processOperation(stack, operator.pop());
+                    operator.push(current);
+                    mayUnary = true;
+                } else {
+                    let operand = '';
+                    while (i < string.length && this.isDigit(string[i]))
+                        operand += string[i++];
+                    --i;
+                    stack.push(operand.indexOf('.') === -1 ? parseInt(operand) : parseFloat(operand));
+                    mayUnary = false;
+                }
         while (operator.length > 0)
             this.processOperation(stack, operator.pop());
         return stack[stack.length - 1];
     }
 };
-
-console.log(StringCalculator.calculate('((2+3)*4+(-1))/3.2'));
 
 const DateConverter = {
     convertDate: function (source, sourceFormat, targetFormat) {
@@ -373,6 +382,35 @@ const DateConverter = {
 
     },
 };
+
+function onTextFormatClick() {
+    let formatValue = document.querySelector('input[name="wrap"]:checked').value;
+    let formatType = formatValue === 'noWrap' ? FormatType.noWrap :
+        formatValue === 'wordWrap' ? FormatType.wordWrap :
+            formatValue === 'sentenceWrap' ? FormatType.sentenceWrap : FormatType.charWrap;
+    let source = document.getElementById("text-input").value;
+    let dest = document.getElementById("text-output");
+    const maxLength = parseInt(document.getElementById("text-maxlength").value);
+    const maxStrings = parseInt(document.getElementById("text-maxstrings").value);
+    dest.value = TextFormatter.format(source, maxLength, maxStrings, formatType)
+}
+
+function onCalculateClick() {
+    let source = document.getElementById("calculator-input").value;
+    let dest = document.getElementById("calculator-output");
+    dest.value = StringCalculator.calculate(source);
+}
+
+function onConvertClick() {
+    let source = document.getElementById("converter-input").value;
+    let dest = document.getElementById("converter-output");
+    let base = document.getElementById("converter-base").value;
+    let target = document.getElementById("converter-target").value;
+    let baseAlphabet = document.getElementById("converter-base-alph").value;
+    let targetAlphabet = document.getElementById("converter-target-alph").value;
+    dest.value = Converter.convert(source.split(''), parseInt(base), parseInt(target),
+        [baseAlphabet, targetAlphabet]).join('');
+}
 
 function onShowHideClick() {
     const x = document.getElementById("myDIV");

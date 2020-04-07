@@ -8,7 +8,79 @@
     <script src="index.js"></script>
 </head>
 <body>
+<div class="block array-tool">
+    <input type="button" class="array-tool__button" value="Sub Sum"/>
+    <input type="button" class="array-tool__button" value="Sub Sun Slow"/>
+    <input type="button" class="array-tool__button" value="Min"/>
+    <input type="button" class="array-tool__button" value="Max"/>
+    <input type="button" class="array-tool__button" value="Median"/>
+    <input type="button" class="array-tool__button" value="Selection"/>
+</div>
+<div class="block date-tool">
 
+</div>
+<div class="block text-tool">
+    <textarea class="text-tool__text" id="text-input"></textarea>
+    <div class="text-tool__settings">
+        <input type="button" value="Format" onclick="onTextFormatClick()"/>
+        <label>
+            Max string length:
+            <input type="text" id="text-maxlength"/>
+        </label>
+        <label>
+            Max number of strings:
+            <input type="text" id="text-maxstrings"/>
+        </label>
+        <label>
+            No Wrap
+            <input type="radio" name="wrap" value="noWrap" checked>
+        </label>
+        <label>
+            Word wrap
+            <input type="radio" name="wrap" value="wordWrap">
+        </label>
+        <label>
+            Sentence wrap
+            <input type="radio" name="wrap" value="sentenceWrap">
+        </label>
+        <label>
+            Char wrap
+            <input type="radio" name="wrap" value="charWrap">
+        </label>
+    </div>
+    <textarea class="text-tool__text" id="text-output"></textarea>
+</div>
+<div class="block calculator">
+    <input type="text" class="calculator__text" id="calculator-input"/>
+    <input type="button" class="calculator__button" onclick="onCalculateClick()" value="Calculate"/>
+    <input type="text" class="calculator__text" id="calculator-output"/>
+</div>
+<div class="block converter">
+    <input type="text" class="converter__text" id="converter-input"/>
+    <div class="converter__settings">
+        <input type="button" class="converter__button" onclick="onConvertClick()" value="Convert"/>
+        <label>
+            Base:
+            <input type="text" id="converter-base"/>
+        </label>
+        <label>
+            Target:
+            <input type="text" id="converter-target"/>
+        </label>
+        <label>
+            Base alphabet:
+            <input type="text" id="converter-base-alph"/>
+        </label>
+        <label>
+            Target alphabet:
+            <input type="text" id="converter-target-alph"/>
+        </label>
+    </div>
+    <input type="text" class="converter__text" id="converter-output"/>
+</div>
+<div class="block showhide__block">
+
+</div>
 
 
 </body>

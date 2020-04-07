@@ -1,0 +1,46 @@
+.block {
+    margin-bottom: 2em;
+}
+
+
+.text-tool {
+    display: flex;
+    justify-content: space-around;
+}
+
+.text-tool__settings {
+    display: flex;
+    flex-basis: 30%;
+    flex-flow: column;
+    align-items: center;
+}
+
+.text-tool__text {
+    flex-basis: 30%;
+    resize: none;
+}
+
+.calculator {
+    display: flex;
+}
+
+.calculator__text {
+    flex-basis: 20%;
+}
+
+.calculator__button {
+    flex-basis: 10%;
+    margin: auto 1em;
+}
+
+.converter {
+    display: flex;
+    align-items: center;
+}
+
+.converter__settings {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    margin: auto 1em;
+}
