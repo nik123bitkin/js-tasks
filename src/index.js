@@ -374,7 +374,7 @@ const StringCalculator = {
         while (operator.length > 0)
             this.processOperation(stack, operator.pop());
         return stack[stack.length - 1];
-    }
+    },
 };
 
 const DateUnits = {
@@ -421,6 +421,48 @@ const DateConverter = {
     },
 };
 
+const CacheCalculator = {
+    cache: new Map(),
+
+    calculate: function (equation, cacheOptions) {
+        const operators = '+-*/%';
+        equation = equation.replace(' ', '');
+        let array = equation.split('');
+        let index = array.findIndex((el) => operators.includes(el));
+        let left = parseFloat(equation.substring(0, index));
+        let right = parseFloat(equation.substring(index + 1));
+        let result = 0;
+        if(this.cache.has(equation)) {
+            result = this.cache.get(equation);
+            console.log("With cache")
+        } else {
+            switch (array[index]) {
+                case '+':
+                    result = left + right;
+                    break;
+                case '-':
+                    result = left - right;
+                    break;
+                case '*':
+                    result = left * right;
+                    break;
+                case '/':
+                    result = left / right;
+                    break;
+                case '%':
+                    result = left % right;
+                    break;
+            }
+            if(cacheOptions.get(array[index])) {
+                this.cache.set(equation, result);
+                console.log("Cached");
+            }
+            console.log("Without cache");
+        }
+        return result;
+    }
+}
+
 function onBuildClick() {
     const cellsPerRow = 10;
     let table = document.getElementById('array-table');
@@ -450,7 +492,6 @@ function onBuildClick() {
         }
     }
 }
-
 
 function getCellValues() {
     let array = [];
@@ -536,20 +577,25 @@ function onTextFormatClick() {
 
 function onCalculateClick() {
     const allowedSymbols = '0123456789.+-*/()'
+    let cacheChecked = document.getElementById("cache-input").checked;
     let source = document.getElementById("calculator-input").value;
-    //validation
     let correct = true;
     for (let char of source) {
         if (allowedSymbols.indexOf(char) === -1) {
             correct = false;
         }
     }
-    //validation
     if (correct) {
         let dest = document.getElementById("calculator-output");
-        dest.value = StringCalculator.calculate(source);
-    } else {
-        //display red borders?
+        let cacheOptions = new Map([
+            ['+', document.getElementById('cache-plus').checked],
+            ['-', document.getElementById('cache-minus').checked],
+            ['*', document.getElementById('cache-mult').checked],
+            ['/', document.getElementById('cache-div').checked],
+            ['%', document.getElementById('cache-rem').checked],
+        ]);
+        dest.value = cacheChecked ?
+            CacheCalculator.calculate(source, cacheOptions) : StringCalculator.calculate(source);
     }
 }
 

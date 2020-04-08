@@ -139,13 +139,23 @@
     display: flex;
 }
 
+.calculator__content {
+    align-items: flex-start;
+}
+
 .calculator__text {
     flex-basis: 20%;
 }
 
 .calculator__button {
     flex-basis: 10%;
-    margin: auto 1em;
+    margin: 0 1em;
+}
+
+
+.calculator__cache-title {
+    margin: 0;
+    padding: 0;
 }
 
 .converter {
