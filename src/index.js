@@ -57,6 +57,10 @@ const ArrayTool = {
                 start = i;
             }
         }
+        if (length > maxLength) {
+            maxLength = length;
+            startIndex = start;
+        }
         return array.slice(startIndex, startIndex + maxLength);
     }
 
@@ -373,6 +377,16 @@ const StringCalculator = {
     }
 };
 
+const DateUnits = {
+    seconds: 1,
+    milliseconds: 0.001,
+    ticks: 0.0000001,
+    minutes: 60,
+    hours: 3600,
+};
+
+Object.freeze(DateUnits);
+
 const DateConverter = {
 
     month: new Map([
@@ -382,61 +396,212 @@ const DateConverter = {
     ]),
 
     convertDate: function (source, sourceFormat, targetFormat, isLong = false) {
-        sourceFormat = sourceFormat || 'DDMMYYYY';
-        targetFormat = targetFormat || 'DD-MM-YYYY';
+        sourceFormat = sourceFormat.toUpperCase() || 'DDMMYYYY';
+        targetFormat = targetFormat.toUpperCase() || 'DD-MM-YYYY';
         let day = source.substr(sourceFormat.indexOf('DD'), 2);
         let month = source.substr(sourceFormat.indexOf('MM'), 2);
         let year = source.substr(sourceFormat.indexOf('YYYY'), 4);
         let target = '';
-        if(isLong) {
+        if (isLong) {
             target = day + ' ' + this.month.get(month) + ' ' + year;
-        }else {
+        } else {
             target = targetFormat.replace('DD', day).replace('MM', month).replace('YYYY', year);
         }
         return target;
     },
 
-    convertTicks: function (source, targetFormat) {
-
+    convertTicks: function (source, targetFormat, dateUnit) {
+        targetFormat = targetFormat.toUpperCase() || 'DD-MM-YYYY';
+        let seconds = source * dateUnit;
+        let date = new Date(seconds);
+        let day = date.getDate().toString(10);
+        let month = (date.getMonth() + 1).toString(10);
+        let year = date.getFullYear().toString(10);
+        return targetFormat.replace('DD', day).replace('MM', month).replace('YYYY', year);
     },
 };
 
-console.log(DateConverter.convertDate('12022000', null, null, true))
+function onBuildClick() {
+    const cellsPerRow = 10;
+    let table = document.getElementById('array-table');
+    table.innerText = '';
+    const stringLength = document.getElementById('array-input').value;
+    const length = parseInt(stringLength);
+    if (!isNaN(length) || length > 45) {
+        const rows = Math.floor(length / cellsPerRow);
+        const remainCells = length % cellsPerRow;
+        let templateRow = document.getElementById('array-table-row').content.querySelector('tr');
+        let templateCell = document.getElementById('array-table-cell').content.querySelector('th');
+        for (let i = 0; i < rows; i++) {
+            let row = document.importNode(templateRow, true);
+            for (let j = 0; j < cellsPerRow; j++) {
+                let cell = document.importNode(templateCell, true);
+                row.appendChild(cell);
+            }
+            table.appendChild(row);
+        }
+        if (remainCells !== 0) {
+            let row = document.importNode(templateRow, true);
+            for (let j = 0; j < remainCells; j++) {
+                let cell = document.importNode(templateCell, true);
+                row.appendChild(cell);
+            }
+            table.appendChild(row);
+        }
+    }
+}
+
+
+function getCellValues() {
+    let array = [];
+    const table = document.getElementById('array-table');
+    for (let row = 0; row < table.rows.length; row++) {
+        for (let cell = 0; cell < table.rows[row].cells.length; cell++) {
+            let value = table.rows[row].cells[cell].children[0].value;
+            let number = parseFloat(value);
+            if (isNaN(number)) {
+                return [];
+            }
+            array.push(number);
+        }
+    }
+    return array;
+}
+
+function setCellValues(array) {
+    const table = document.getElementById('array-table');
+    for (let row = 0; row < table.rows.length; row++) {
+        for (let cell = 0; cell < table.rows[row].cells.length; cell++) {
+            let child = table.rows[row].cells[cell].children[0];
+            child.value = array[row * table.rows[0].cells.length + cell];
+        }
+    }
+    return array;
+}
+
+function onArrayCommandClick(element) {
+    let array = getCellValues();
+    if (array.length > 0) {
+        let dest = document.getElementById('array-result');
+        switch (element.value) {
+            case 'Sub Sum':
+                dest.value = ArrayTool.getMaxSubSumFast(array);
+                break;
+            case 'Sub Sum Slow':
+                dest.value = ArrayTool.getMaxSubSumSlow(array);
+                break;
+            case 'Min':
+                dest.value = ArrayTool.getMin(array);
+                break;
+            case 'Max':
+                dest.value = ArrayTool.getMax(array);
+                break;
+            case 'Median':
+                dest.value = ArrayTool.getMedian(array);
+                break;
+            case 'Selection':
+                dest.value = ArrayTool.getIncSequence(array);
+                break;
+            case 'Heap sort':
+                setCellValues(ArraySorter.heapSort(array));
+                break;
+            case 'Quick sort':
+                setCellValues(ArraySorter.quickSort(array));
+                break;
+            case 'Counting sort':
+                setCellValues(ArraySorter.countingSort(array));
+                break;
+            case 'Insertion sort':
+                setCellValues(ArraySorter.insertionSort(array));
+                break;
+        }
+    }
+}
 
 function onTextFormatClick() {
     let formatValue = document.querySelector('input[name="wrap"]:checked').value;
     let formatType = formatValue === 'noWrap' ? FormatType.noWrap :
         formatValue === 'wordWrap' ? FormatType.wordWrap :
             formatValue === 'sentenceWrap' ? FormatType.sentenceWrap : FormatType.charWrap;
-    let source = document.getElementById("text-input").value;
-    let dest = document.getElementById("text-output");
-    const maxLength = parseInt(document.getElementById("text-maxlength").value);
-    const maxStrings = parseInt(document.getElementById("text-maxstrings").value);
-    dest.value = TextFormatter.format(source, maxLength, maxStrings, formatType)
+    let source = document.getElementById("formatter-input").value;
+    let dest = document.getElementById("formatter-output");
+    const maxLength = parseInt(document.getElementById("formatter-maxlength").value);
+    const maxStrings = parseInt(document.getElementById("formatter-maxstrings").value);
+    if (isNaN(maxLength) || isNaN(maxStrings)) {
+        dest.value = source;
+    } else {
+        dest.value = TextFormatter.format(source, maxLength, maxStrings, formatType);
+    }
 }
 
 function onCalculateClick() {
+    const allowedSymbols = '0123456789.+-*/()'
     let source = document.getElementById("calculator-input").value;
-    let dest = document.getElementById("calculator-output");
-    dest.value = StringCalculator.calculate(source);
+    //validation
+    let correct = true;
+    for (let char of source) {
+        if (allowedSymbols.indexOf(char) === -1) {
+            correct = false;
+        }
+    }
+    //validation
+    if (correct) {
+        let dest = document.getElementById("calculator-output");
+        dest.value = StringCalculator.calculate(source);
+    } else {
+        //display red borders?
+    }
 }
 
 function onConvertClick() {
     let source = document.getElementById("converter-input").value;
     let dest = document.getElementById("converter-output");
-    let base = document.getElementById("converter-base").value;
-    let target = document.getElementById("converter-target").value;
+    let stringBase = document.getElementById("converter-base").value;
+    let base = parseInt(stringBase);
+    let stringTarget = document.getElementById("converter-target").value;
+    let target = parseInt(stringTarget);
     let baseAlphabet = document.getElementById("converter-base-alph").value;
     let targetAlphabet = document.getElementById("converter-target-alph").value;
-    dest.value = Converter.convert(source.split(''), parseInt(base), parseInt(target),
-        [baseAlphabet, targetAlphabet]).join('');
+    if(isNaN(base) || isNaN(target) || base < 2 || target < 2 ||
+        base > baseAlphabet.length || target > targetAlphabet.length) {
+        dest.value = source;
+    } else {
+        dest.value = Converter.convert(source.split(''), base, target,
+            [baseAlphabet, targetAlphabet]).join('');
+    }
 }
 
-function onShowHideClick() {
-    const x = document.getElementById("myDIV");
-    if (x.style.display === "none") {
-        x.style.display = "block";
+function onDateConvertClick() {
+    let source = document.getElementById("date-input").value;
+    let dest = document.getElementById("date-output");
+    let sourceFormat = document.getElementById("date-source-format").value;
+    let targetFormat = document.getElementById("date-target-format").value;
+    let isLong = document.getElementById('date-long').checked;
+    let unitValue = document.querySelector('input[name="date-format"]:checked').value;
+    let unitType;
+    switch (unitValue) {
+        case 'ticks':
+            unitType = DateUnits.ticks;
+            break;
+        case 'milliseconds':
+            unitType = DateUnits.milliseconds;
+            break;
+        case 'seconds':
+            unitType = DateUnits.seconds;
+            break;
+        case 'minutes':
+            unitType = DateUnits.minutes;
+            break;
+        case 'hours':
+            unitType = DateUnits.hours;
+            break;
+        case 'date':
+            unitType = null;
+            break;
+    }
+    if (unitType) {
+        dest.value = DateConverter.convertTicks(source, targetFormat, unitType);
     } else {
-        x.style.display = "none";
+        dest.value = DateConverter.convertDate(source, sourceFormat, targetFormat, isLong);
     }
 }

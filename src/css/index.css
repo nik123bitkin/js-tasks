@@ -1,23 +1,138 @@
+:root {
+    --button-bg-color: #ed6a3d;
+    --button-fg-color: #FFFFFF;
+    --button-hover-color: #ed3000;
+}
+
+.body {
+    font-family: Calibri, sans-serif;
+    color: white;
+    background: gray;
+}
+
+.text-input {
+    border: 1px solid gray;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 1em;
+    padding: 0.5em;
+    margin-left: 0.5em;
+}
+
+.button {
+    border: none;
+    border-radius: 5px;
+    padding: 0.5em 1.5em;
+    background: var(--button-bg-color);
+    color: var(--button-fg-color);
+    font-family: inherit;
+    font-size: 1em;
+}
+
+.button:hover {
+    background: var(--button-hover-color);
+}
+
 .block {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
     margin-bottom: 2em;
 }
 
+.block__header {
+    text-align: center;
+}
 
-.text-tool {
+.block__content {
+    display: flex;
+    justify-content: center;
+}
+
+.label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    margin: 0.3em auto;
+}
+
+.label:first-child {
+    margin-top: 0;
+    margin-bottom: 0.3em;
+}
+
+.array__block {
+    flex-flow: column;
+}
+
+.array__data {
+    display: flex;
+    margin-bottom: 1em;
+}
+
+.array__button {
+    align-self: flex-start;
+}
+
+.array__label {
+    margin-right: 0.5em;
+}
+
+.array__command {
     display: flex;
     justify-content: space-around;
 }
 
-.text-tool__settings {
+.array__command > .label {
+    display: block;
+    width: unset;
+    margin: unset;
+}
+
+.array__cell-value {
+    width: 3em;
+}
+
+.date-tool {
+    display: flex;
+}
+
+.date-tool__settings {
+    display: flex;
+    flex-flow: column;
+    flex-basis: 30%;
+}
+
+.date-tool__command {
+    flex-basis: 10%;
+    text-align: center;
+    margin: 0 1em;
+}
+
+.date-tool__output {
+    flex-basis: 30%;
+}
+
+.date-tool__output > .label {
+    justify-content: flex-start;
+}
+
+.formatter {
+    display: flex;
+    justify-content: space-around;
+}
+
+.formatter__settings {
     display: flex;
     flex-basis: 30%;
     flex-flow: column;
     align-items: center;
 }
 
-.text-tool__text {
+.formatter__text {
     flex-basis: 30%;
-    resize: none;
+    height: 10em;
 }
 
 .calculator {
@@ -42,5 +157,15 @@
     display: flex;
     flex-flow: column;
     justify-content: center;
-    margin: auto 1em;
+    flex-basis: 30%;
+}
+
+.converter__command {
+    flex-basis: 10%;
+    text-align: center;
+    margin: 0 1em;
+}
+
+.converter__output {
+    flex-basis: 30%;
 }

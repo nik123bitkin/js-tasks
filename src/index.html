@@ -7,78 +7,210 @@
     <link rel="stylesheet" href="css/index.css">
     <script src="index.js"></script>
 </head>
-<body>
-<div class="block array-tool">
-    <input type="button" class="array-tool__button" value="Sub Sum"/>
-    <input type="button" class="array-tool__button" value="Sub Sun Slow"/>
-    <input type="button" class="array-tool__button" value="Min"/>
-    <input type="button" class="array-tool__button" value="Max"/>
-    <input type="button" class="array-tool__button" value="Median"/>
-    <input type="button" class="array-tool__button" value="Selection"/>
+<body class="body">
+<div class="block array">
+    <div class="block__header">
+        <h1 class="block__title">Array tool</h1>
+    </div>
+    <div class="block__content array__block">
+        <div class="array__data">
+            <label class="array__label">
+                Number of elements:
+                <input type="text" class="text-input" id="array-input"/>
+            </label>
+            <input type="button" class="button array__button" onclick="onBuildClick()" value="Build"/>
+            <table class="array__table" id="array-table">
+            </table>
+            <template id="array-table-row">
+                <tr class="array__table-row">
+                </tr>
+            </template>
+            <template id="array-table-cell">
+                <th class="array__table-cell">
+                    <input class="text-input array__cell-value" type="text" name="array-cell" value="" maxlength="5"/>
+                </th>
+            </template>
+        </div>
+        <div class="array__command">
+            <label class="label">
+                Result:
+                <input class="text-input" type="text" id="array-result"/>
+            </label>
+            <input type="button" class="button array__button" value="Sub Sum"
+                   onclick="onArrayCommandClick(this)"/>
+            <input type="button" class="button array__button" value="Sub Sum Slow"
+                   onclick="onArrayCommandClick(this)"/>
+            <input type="button" class="button array__button" value="Min"
+                   onclick="onArrayCommandClick(this)"/>
+            <input type="button" class="button array__button" value="Max"
+                   onclick="onArrayCommandClick(this)"/>
+            <input type="button" class="button array__button" value="Median"
+                   onclick="onArrayCommandClick(this)"/>
+            <input type="button" class="button array__button" value="Selection"
+                   onclick="onArrayCommandClick(this)"/>
+            <input type="button" class="button array__button" value="Heap sort"
+                   onclick="onArrayCommandClick(this)"/>
+            <input type="button" class="button array__button" value="Quick sort"
+                   onclick="onArrayCommandClick(this)"/>
+            <input type="button" class="button array__button" value="Counting sort"
+                   onclick="onArrayCommandClick(this)"/>
+            <input type="button" class="button array__button" value="Insertion sort"
+                   onclick="onArrayCommandClick(this)"/>
+        </div>
+    </div>
 </div>
 <div class="block date-tool">
+    <div class="block__header">
+        <h1 class="block__title">Date converter</h1>
+    </div>
+    <div class="block__content">
+        <div class="date-tool__settings">
+            <label class="label" for="date-input">
+                Date(or ticks):
+                <input type="text" class="text-input date-tool__text" id="date-input"/>
+            </label>
+            <label class="label" for="date-source-format">
+                Source format(for date only):
+                <input class="text-input date-tool__text" type="text" id="date-source-format"/>
+            </label>
+            <label class="label" for="date-target-format">
+                Target format:
+                <input class="text-input date-tool__text" type="text" id="date-target-format"/>
+            </label>
+            <label class="label">
+                Date
+                <input type="radio" name="date-format" value="date" checked/>
+            </label>
+            <label class="label">
+                Ticks
+                <input type="radio" name="date-format" value="ticks"/>
+            </label>
+            <label class="label">
+                Milliseconds
+                <input type="radio" name="date-format" value="milliseconds"/>
+            </label>
+            <label class="label">
+                Seconds
+                <input type="radio" name="date-format" value="seconds"/>
+            </label>
+            <label class="label">
+                Minutes
+                <input type="radio" name="date-format" value="minutes"/>
+            </label>
+            <label class="label">
+                Hours
+                <input type="radio" name="date-format" value="hours"/>
+            </label>
+            <label class="label">
+                Use long format:
+                <input type="checkbox" id="date-long"/>
+            </label>
+        </div>
+        <div class="date-tool__command">
+            <input type="button" class="button date-tool__button" onclick="onDateConvertClick()" value="convert"/>
+        </div>
+        <div class="date-tool__output">
+            <label class="label" for="date-output">
+                Result:
+                <input type="text" class="text-input date-tool__text" value="" id="date-output"/>
+            </label>
+        </div>
+    </div>
 
 </div>
-<div class="block text-tool">
-    <textarea class="text-tool__text" id="text-input"></textarea>
-    <div class="text-tool__settings">
-        <input type="button" value="Format" onclick="onTextFormatClick()"/>
-        <label>
-            Max string length:
-            <input type="text" id="text-maxlength"/>
-        </label>
-        <label>
-            Max number of strings:
-            <input type="text" id="text-maxstrings"/>
-        </label>
-        <label>
-            No Wrap
-            <input type="radio" name="wrap" value="noWrap" checked>
-        </label>
-        <label>
-            Word wrap
-            <input type="radio" name="wrap" value="wordWrap">
-        </label>
-        <label>
-            Sentence wrap
-            <input type="radio" name="wrap" value="sentenceWrap">
-        </label>
-        <label>
-            Char wrap
-            <input type="radio" name="wrap" value="charWrap">
-        </label>
+<div class="block formatter">
+    <div class="block__header">
+        <h1 class="block__title">Text formatter</h1>
     </div>
-    <textarea class="text-tool__text" id="text-output"></textarea>
+    <div class="block__content">
+        <textarea class="text-input formatter__text" id="formatter-input"></textarea>
+        <div class="formatter__settings">
+            <input type="button" class="button" value="Format" onclick="onTextFormatClick()"/>
+            <label class="label">
+                Max string length:
+                <input type="text" class="text-input" id="formatter-maxlength"/>
+            </label>
+            <label class="label">
+                Max number of strings:
+                <input type="text" class="text-input" id="formatter-maxstrings"/>
+            </label>
+            <label class="label">
+                No Wrap
+                <input type="radio" name="wrap" value="noWrap" checked>
+            </label>
+            <label class="label">
+                Word wrap
+                <input type="radio" name="wrap" value="wordWrap">
+            </label>
+            <label class="label">
+                Sentence wrap
+                <input type="radio" name="wrap" value="sentenceWrap">
+            </label>
+            <label class="label">
+                Char wrap
+                <input type="radio" name="wrap" value="charWrap">
+            </label>
+        </div>
+        <textarea class="text-input formatter__text" id="formatter-output"></textarea>
+    </div>
 </div>
 <div class="block calculator">
-    <input type="text" class="calculator__text" id="calculator-input"/>
-    <input type="button" class="calculator__button" onclick="onCalculateClick()" value="Calculate"/>
-    <input type="text" class="calculator__text" id="calculator-output"/>
+    <div class="block__header">
+        <h1 class="block__title">String calculator</h1>
+    </div>
+    <div class="block__content">
+        <div class="calculator__fields">
+            <label class="label" for="calculator-input">
+                Equation:
+                <input type="text" class="text-input calculator__text" id="calculator-input"/>
+            </label>
+            <label class="label" for="calculator-output">
+                Result:
+                <input type="text" class="text-input calculator__text" id="calculator-output"/>
+            </label>
+        </div>
+        <input type="button" class="button calculator__button" onclick="onCalculateClick()" value="Calculate"/>
+    </div>
 </div>
 <div class="block converter">
-    <input type="text" class="converter__text" id="converter-input"/>
-    <div class="converter__settings">
-        <input type="button" class="converter__button" onclick="onConvertClick()" value="Convert"/>
-        <label>
-            Base:
-            <input type="text" id="converter-base"/>
-        </label>
-        <label>
-            Target:
-            <input type="text" id="converter-target"/>
-        </label>
-        <label>
-            Base alphabet:
-            <input type="text" id="converter-base-alph"/>
-        </label>
-        <label>
-            Target alphabet:
-            <input type="text" id="converter-target-alph"/>
-        </label>
+    <div class="block__header">
+        <h1 class="block__title">Converter</h1>
     </div>
-    <input type="text" class="converter__text" id="converter-output"/>
+    <div class="block__content">
+        <div class="converter__settings">
+            <label class="label" for="converter-input">
+                Source:
+                <input type="text" class="text-input converter__text" id="converter-input"/>
+            </label>
+            <label class="label">
+                Base:
+                <input type="text" class="text-input" id="converter-base"/>
+            </label>
+            <label class="label">
+                Target:
+                <input type="text" class="text-input" id="converter-target"/>
+            </label>
+            <label class="label">
+                Base alphabet:
+                <input type="text" class="text-input" id="converter-base-alph"/>
+            </label>
+            <label class="label">
+                Target alphabet:
+                <input type="text" class="text-input" id="converter-target-alph"/>
+            </label>
+        </div>
+        <div class="converter__command">
+            <input type="button" class="button converter__button" onclick="onConvertClick()" value="Convert"/>
+        </div>
+        <div class="converter__output">
+            <label class="label" for="converter-output">
+                Result:
+                <input type="text" class="text-input converter__text" id="converter-output"/>
+            </label>
+        </div>
+    </div>
 </div>
-<div class="block showhide__block">
+<div class="block cache-calculator">
 
 </div>
 
