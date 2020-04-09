@@ -11,12 +11,16 @@
 }
 
 .text-input {
-    border: 1px solid gray;
+    border: 2px solid gray;
     border-radius: 5px;
     font-family: inherit;
     font-size: 1em;
     padding: 0.5em;
     margin-left: 0.5em;
+}
+
+.input--error {
+    border: 2px solid red;
 }
 
 .button {

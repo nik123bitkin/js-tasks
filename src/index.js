@@ -210,70 +210,57 @@ const TextFormatter = {
 
     format: function (text, maxLength = 0, maxStrings = Number.MAX_SAFE_INTEGER,
                       formatType = FormatType.noWrap) {
-        try {
-            // Max length is above text length
-            if (maxLength === 0 || maxLength > text.length) {
-                return text;
-            }
-            // length of string is less than text and no wrap allowed
-            if (maxLength < text.length && formatType === FormatType.noWrap) {
-                throw new Error("Max length of the string is less than text length and no wrap allowed");
-            }
-            //here maxlength 100% < text.length and FormatType !== nowrap
-
-            let separators = this.separateChars;
-            let newText = [];
-            let startIndex = 0;
-            switch (formatType) {
-                case FormatType.wordWrap:
-                    separators = [' '];
-                case FormatType.sentenceWrap:
-                    for (let i = 0; i < maxStrings && startIndex < text.length; i++) {
-                        let temp = text.slice(startIndex, startIndex + maxLength);
-                        let j = temp.length - 1;
-                        for (; j > -1; j--) {
-                            if (separators.indexOf(temp[j]) !== -1) {
-                                break;
-                            }
-                        }
-                        // no separators and not last chunk
-                        if (j === -1 && (startIndex + maxLength < text.length)) {
-                            throw new Error("Unable to format");
-                        }
-                        //if last chunk of text
-                        if (startIndex + maxLength > text.length) {
-                            newText.push(temp);
-                            startIndex = text.length;
-                        } else {
-                            newText.push(text.slice(startIndex, startIndex + j + 1));
-                            startIndex += j + 1;
-                        }
-                    }
-                    if (startIndex < text.length) {
-                        throw new Error("Unable to format");
-                    } else {
-                        newText = newText.join('\n');
-                        return newText;
-                    }
-                    break;
-                case FormatType.charWrap:
-                    for (let i = 0; i < maxStrings && startIndex < text.length; i++) {
-                        newText.push(text.slice(startIndex, startIndex + maxLength));
-                        startIndex += maxLength;
-                    }
-                    if (startIndex < text.length) {
-                        throw new Error("Unable to format");
-                    } else {
-                        newText = newText.join('\n');
-                        return newText;
-                    }
-                    break;
-                default:
-                    throw new Error("Smth went wrong with nowrap");
-            }
-        } catch (e) {
-            console.log(e);
+        if (maxLength === 0 || maxLength > text.length) {
             return text;
+        }
+        if (maxLength < text.length && formatType === FormatType.noWrap) {
+            throw new Error("Max length of the string is less than text length and no wrap allowed");
+        }
+        let separators = this.separateChars;
+        let newText = [];
+        let startIndex = 0;
+        switch (formatType) {
+            case FormatType.wordWrap:
+                separators = [' '];
+            case FormatType.sentenceWrap:
+                for (let i = 0; i < maxStrings && startIndex < text.length; i++) {
+                    let temp = text.slice(startIndex, startIndex + maxLength);
+                    let j = temp.length - 1;
+                    for (; j > -1; j--) {
+                        if (separators.indexOf(temp[j]) !== -1) {
+                            break;
+                        }
+                    }
+                    // no separators and not last chunk
+                    if (j === -1 && (startIndex + maxLength < text.length)) {
+                        throw new Error("Unable to format. Change max length or max number of strings");
+                    }
+                    //if last chunk of text
+                    if (startIndex + maxLength > text.length) {
+                        newText.push(temp);
+                        startIndex = text.length;
+                    } else {
+                        newText.push(text.slice(startIndex, startIndex + j + 1));
+                        startIndex += j + 1;
+                    }
+                }
+                if (startIndex < text.length) {
+                    throw new Error("Unable to format. Change max length or max number of strings");
+                } else {
+                    newText = newText.join('\n');
+                    return newText;
+                }
+            case FormatType.charWrap:
+                for (let i = 0; i < maxStrings && startIndex < text.length; i++) {
+                    newText.push(text.slice(startIndex, startIndex + maxLength));
+                    startIndex += maxLength;
+                }
+                if (startIndex < text.length) {
+                    throw new Error("Unable to format. Change max length or max number of strings");
+                } else {
+                    newText = newText.join('\n');
+                    return newText;
+                }
         }
     },
 };
@@ -432,7 +419,7 @@ const CacheCalculator = {
         let left = parseFloat(equation.substring(0, index));
         let right = parseFloat(equation.substring(index + 1));
         let result = 0;
-        if(this.cache.has(equation)) {
+        if (this.cache.has(equation)) {
             result = this.cache.get(equation);
             console.log("With cache")
         } else {
@@ -453,7 +440,7 @@ const CacheCalculator = {
                     result = left % right;
                     break;
             }
-            if(cacheOptions.get(array[index])) {
+            if (cacheOptions.get(array[index])) {
                 this.cache.set(equation, result);
                 console.log("Cached");
             }
@@ -564,14 +551,23 @@ function onTextFormatClick() {
     let formatType = formatValue === 'noWrap' ? FormatType.noWrap :
         formatValue === 'wordWrap' ? FormatType.wordWrap :
             formatValue === 'sentenceWrap' ? FormatType.sentenceWrap : FormatType.charWrap;
-    let source = document.getElementById("formatter-input").value;
-    let dest = document.getElementById("formatter-output");
-    const maxLength = parseInt(document.getElementById("formatter-maxlength").value);
-    const maxStrings = parseInt(document.getElementById("formatter-maxstrings").value);
+    let source = document.getElementById('formatter-input').value;
+    let dest = document.getElementById('formatter-output');
+    const maxLength = Number(document.getElementById('formatter-maxlength').value);
+    const maxStrings = Number(document.getElementById('formatter-maxstrings').value);
     if (isNaN(maxLength) || isNaN(maxStrings)) {
-        dest.value = source;
+        if (isNaN(maxLength)) {
+            document.getElementById('formatter-maxlength').classList.add('input--error')
+        }
+        if (isNaN(maxStrings)) {
+            document.getElementById('formatter-maxstrings').classList.add('input--error')
+        }
     } else {
-        dest.value = TextFormatter.format(source, maxLength, maxStrings, formatType);
+        try {
+            dest.value = TextFormatter.format(source, maxLength, maxStrings, formatType);
+        } catch (e) {
+            dest.value = e.message;
+        }
     }
 }
 
@@ -579,6 +575,8 @@ function onCalculateClick() {
     const allowedSymbols = '0123456789.+-*/()'
     let cacheChecked = document.getElementById("cache-input").checked;
     let source = document.getElementById("calculator-input").value;
+    let dest = document.getElementById("calculator-output");
+    dest.value = '';
     let correct = true;
     for (let char of source) {
         if (allowedSymbols.indexOf(char) === -1) {
@@ -586,7 +584,6 @@ function onCalculateClick() {
         }
     }
     if (correct) {
-        let dest = document.getElementById("calculator-output");
         let cacheOptions = new Map([
             ['+', document.getElementById('cache-plus').checked],
             ['-', document.getElementById('cache-minus').checked],
@@ -596,24 +593,36 @@ function onCalculateClick() {
         ]);
         dest.value = cacheChecked ?
             CacheCalculator.calculate(source, cacheOptions) : StringCalculator.calculate(source);
+    } else {
+        document.getElementById("calculator-input").classList.add('input--error')
     }
 }
 
 function onConvertClick() {
-    let source = document.getElementById("converter-input").value;
+    let source = document.getElementById("converter-input");
     let dest = document.getElementById("converter-output");
-    let stringBase = document.getElementById("converter-base").value;
-    let base = parseInt(stringBase);
-    let stringTarget = document.getElementById("converter-target").value;
-    let target = parseInt(stringTarget);
-    let baseAlphabet = document.getElementById("converter-base-alph").value;
-    let targetAlphabet = document.getElementById("converter-target-alph").value;
-    if(isNaN(base) || isNaN(target) || base < 2 || target < 2 ||
-        base > baseAlphabet.length || target > targetAlphabet.length) {
-        dest.value = source;
+    dest.value = '';
+    let stringBase = document.getElementById("converter-base");
+    let base = Number(stringBase.value);
+    let stringTarget = document.getElementById("converter-target");
+    let target = Number(stringTarget.value);
+    let baseAlphabet = document.getElementById("converter-base-alph");
+    let targetAlphabet = document.getElementById("converter-target-alph");
+    if (isNaN(base) || base < 2 || base > baseAlphabet.value.length) {
+        stringBase.classList.add('input--error');
+        if (base > baseAlphabet.value.length) {
+            baseAlphabet.classList.add('input--error');
+        }
+    } else if (isNaN(target) || target < 2 || target > targetAlphabet.value.length) {
+        stringTarget.classList.add('input--error');
+        if (target > targetAlphabet.value.length) {
+            targetAlphabet.classList.add('input--error');
+        }
+    } else if ([...source.value].findIndex((char) => baseAlphabet.value.indexOf(char) === -1) !== -1) {
+        source.classList.add('input--error');
     } else {
-        dest.value = Converter.convert(source.split(''), base, target,
-            [baseAlphabet, targetAlphabet]).join('');
+        dest.value = Converter.convert(source.value.split(''), base, target,
+            [baseAlphabet.value, targetAlphabet.value]).join('');
     }
 }
 
@@ -649,5 +658,14 @@ function onDateConvertClick() {
         dest.value = DateConverter.convertTicks(source, targetFormat, unitType);
     } else {
         dest.value = DateConverter.convertDate(source, sourceFormat, targetFormat, isLong);
+    }
+}
+
+function onInputChange() {
+    let inputs = document.getElementsByClassName('text-input');
+    for (let element of inputs) {
+        if (element.classList.contains('input--error')) {
+            element.classList.remove('input--error');
+        }
     }
 }

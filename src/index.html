@@ -128,11 +128,11 @@
             <input type="button" class="button" value="Format" onclick="onTextFormatClick()"/>
             <label class="label">
                 Max string length:
-                <input type="text" class="text-input" id="formatter-maxlength"/>
+                <input type="text" class="text-input" id="formatter-maxlength" oninput="onInputChange()"/>
             </label>
             <label class="label">
                 Max number of strings:
-                <input type="text" class="text-input" id="formatter-maxstrings"/>
+                <input type="text" class="text-input" id="formatter-maxstrings" oninput="onInputChange()"/>
             </label>
             <label class="label">
                 No Wrap
@@ -162,7 +162,8 @@
         <div class="calculator__fields">
             <label class="label" for="calculator-input">
                 Equation:
-                <input type="text" class="text-input calculator__text" id="calculator-input"/>
+                <input type="text" class="text-input calculator__text" id="calculator-input"
+                       oninput="onInputChange()"/>
             </label>
             <label class="label" for="calculator-output">
                 Result:
@@ -207,23 +208,24 @@
         <div class="converter__settings">
             <label class="label" for="converter-input">
                 Source:
-                <input type="text" class="text-input converter__text" id="converter-input"/>
+                <input type="text" class="text-input converter__text" id="converter-input"
+                       oninput="onInputChange()"/>
             </label>
             <label class="label">
                 Base:
-                <input type="text" class="text-input" id="converter-base"/>
+                <input type="text" class="text-input" id="converter-base" oninput="onInputChange()"/>
             </label>
             <label class="label">
                 Target:
-                <input type="text" class="text-input" id="converter-target"/>
+                <input type="text" class="text-input" id="converter-target" oninput="onInputChange()"/>
             </label>
             <label class="label">
                 Base alphabet:
-                <input type="text" class="text-input" id="converter-base-alph"/>
+                <input type="text" class="text-input" id="converter-base-alph" oninput="onInputChange()"/>
             </label>
             <label class="label">
                 Target alphabet:
-                <input type="text" class="text-input" id="converter-target-alph"/>
+                <input type="text" class="text-input" id="converter-target-alph" oninput="onInputChange()"/>
             </label>
         </div>
         <div class="converter__command">
