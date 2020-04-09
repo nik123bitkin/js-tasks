@@ -16,7 +16,7 @@
         <div class="array__data">
             <label class="array__label">
                 Number of elements:
-                <input type="text" class="text-input" id="array-input"/>
+                <input type="text" class="text-input" id="array-input" oninput="onInputChange()"/>
             </label>
             <input type="button" class="button array__button" onclick="onBuildClick()" value="Build"/>
             <table class="array__table" id="array-table">
@@ -27,7 +27,8 @@
             </template>
             <template id="array-table-cell">
                 <th class="array__table-cell">
-                    <input class="text-input array__cell-value" type="text" name="array-cell" value="" maxlength="5"/>
+                    <input class="text-input array__cell-value" type="text" name="array-cell" value="" maxlength="5"
+                           oninput="onInputChange()"/>
                 </th>
             </template>
         </div>

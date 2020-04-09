@@ -390,9 +390,14 @@ const DateConverter = {
         let year = source.substr(sourceFormat.indexOf('YYYY'), 4);
         let target = '';
         if (isLong) {
-            target = day + ' ' + this.month.get(month) + ' ' + year;
+            if (this.month.has(month)) {
+                target = day + ' ' + this.month.get(month) + ' ' + year;
+            } else {
+                target = '0-0-0';
+            }
         } else {
-            target = targetFormat.replace('DD', day).replace('MM', month).replace('YYYY', year);
+            target = targetFormat.replace('DD', day)
+                .replace('MM', month).replace('YYYY', year);
         }
         return target;
     },
@@ -454,9 +459,9 @@ function onBuildClick() {
     const cellsPerRow = 10;
     let table = document.getElementById('array-table');
     table.innerText = '';
-    const stringLength = document.getElementById('array-input').value;
-    const length = parseInt(stringLength);
-    if (!isNaN(length) || length > 45) {
+    const stringLength = document.getElementById('array-input');
+    const length = Number(stringLength.value);
+    if (!isNaN(length) || length < 45) {
         const rows = Math.floor(length / cellsPerRow);
         const remainCells = length % cellsPerRow;
         let templateRow = document.getElementById('array-table-row').content.querySelector('tr');
@@ -477,6 +482,8 @@ function onBuildClick() {
             }
             table.appendChild(row);
         }
+    } else {
+        stringLength.classList.add('input--error');
     }
 }
 
@@ -485,9 +492,10 @@ function getCellValues() {
     const table = document.getElementById('array-table');
     for (let row = 0; row < table.rows.length; row++) {
         for (let cell = 0; cell < table.rows[row].cells.length; cell++) {
-            let value = table.rows[row].cells[cell].children[0].value;
-            let number = parseFloat(value);
+            let cellContent = table.rows[row].cells[cell].children[0];
+            let number = Number(cellContent.value);
             if (isNaN(number)) {
+                cellContent.classList.add('input--error');
                 return [];
             }
             array.push(number);
@@ -511,6 +519,7 @@ function onArrayCommandClick(element) {
     let array = getCellValues();
     if (array.length > 0) {
         let dest = document.getElementById('array-result');
+        dest.value = '';
         switch (element.value) {
             case 'Sub Sum':
                 dest.value = ArrayTool.getMaxSubSumFast(array);
