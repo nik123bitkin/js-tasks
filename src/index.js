@@ -26,11 +26,11 @@ const ArrayTool = {
     },
 
     getMin: function (array) {
-        return Math.min(...array);
+        return array.reduce((current, next) => current > next ? next : current);
     },
 
     getMax: function (array) {
-        return Math.max(...array);
+        return array.reduce((current, next) => current < next ? next : current);
     },
 
     getMedian: function (array) {
@@ -165,6 +165,7 @@ const ArraySorter = {
     }
 };
 
+const defaultAlphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const Converter = {
 
     convertToDec: function (vector, base, alphabet) {
@@ -177,7 +178,7 @@ const Converter = {
     },
 
     convert: function (vector, base, target, alphabet =
-        ['0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ']) {
+        [defaultAlphabet, defaultAlphabet]) {
         vector.reverse();
 
         let number = this.convertToDec(vector, base, alphabet[0]);
@@ -580,8 +581,8 @@ function onTextFormatClick() {
     }
 }
 
+const allowedSymbols = '0123456789.+-*/()';
 function onCalculateClick() {
-    const allowedSymbols = '0123456789.+-*/()'
     let cacheChecked = document.getElementById("cache-input").checked;
     let source = document.getElementById("calculator-input").value;
     let dest = document.getElementById("calculator-output");
