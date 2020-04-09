@@ -375,6 +375,7 @@ const DateUnits = {
 
 Object.freeze(DateUnits);
 
+const isLeapYear = (year) => !(year % 100) ? !(year % 400) : !(year % 4);
 const DateConverter = {
 
     month: new Map([
@@ -383,22 +384,34 @@ const DateConverter = {
         ['09', 'September'], ['10', 'October'], ['11', 'November'], ['12', 'December'],
     ]),
 
+    daysInMonth: new Map([
+        ['01', 32], ['02', 29], ['03', 32], ['04', 31],
+        ['05', 32], ['06', 31], ['07', 32], ['08', 32],
+        ['09', 31], ['10', 32], ['11', 31], ['12', 32],
+    ]),
+
+    isBetween: function (number, left, right) {
+        return number > left && number < right;
+    },
+
     convertDate: function (source, sourceFormat, targetFormat, isLong = false) {
         sourceFormat = sourceFormat.toUpperCase() || 'DDMMYYYY';
         targetFormat = targetFormat.toUpperCase() || 'DD-MM-YYYY';
         let day = source.substr(sourceFormat.indexOf('DD'), 2);
         let month = source.substr(sourceFormat.indexOf('MM'), 2);
         let year = source.substr(sourceFormat.indexOf('YYYY'), 4);
-        let target = '';
-        if (isLong) {
-            if (this.month.has(month)) {
-                target = day + ' ' + this.month.get(month) + ' ' + year;
-            } else {
-                target = '0-0-0';
+        let target = '0-0-0';
+        if (this.month.has(month)) {
+            let daysCount = this.daysInMonth.get(month);
+            if ((month !== '02' && this.isBetween(day, 0, daysCount))
+                || (month === '02' && this.isBetween(day, 0, isLeapYear(year) ? daysCount + 1 : daysCount))) {
+                if (isLong) {
+                    target = day + ' ' + this.month.get(month) + ' ' + year;
+                } else {
+                    target = targetFormat.replace('DD', day)
+                        .replace('MM', month).replace('YYYY', year);
+                }
             }
-        } else {
-            target = targetFormat.replace('DD', day)
-                .replace('MM', month).replace('YYYY', year);
         }
         return target;
     },
@@ -582,6 +595,7 @@ function onTextFormatClick() {
 }
 
 const allowedSymbols = '0123456789.+-*/()';
+
 function onCalculateClick() {
     let cacheChecked = document.getElementById("cache-input").checked;
     let source = document.getElementById("calculator-input").value;
