@@ -197,10 +197,10 @@ const Converter = {
 };
 
 const FormatType = {
-    noWrap: 0,
-    wordWrap: 1,
-    charWrap: 2,
-    sentenceWrap: 3,
+    noWrap: 'noWrap',
+    wordWrap: 'wordWrap',
+    charWrap: 'charWrap',
+    sentenceWrap: 'sentenceWrap',
 };
 
 Object.freeze(FormatType);
@@ -430,6 +430,12 @@ const DateConverter = {
 const CacheCalculator = {
     cache: new Map(),
 
+    logMessage: '',
+
+    getLog: function() {
+        return this.logMessage;
+    },
+
     calculate: function (equation, cacheOptions) {
         const operators = '+-*/%';
         equation = equation.replace(' ', '');
@@ -438,9 +444,10 @@ const CacheCalculator = {
         let left = parseFloat(equation.substring(0, index));
         let right = parseFloat(equation.substring(index + 1));
         let result = 0;
+        this.logMessage = '';
         if (this.cache.has(equation)) {
             result = this.cache.get(equation);
-            console.log("With cache")
+            this.logMessage = "From cache";
         } else {
             switch (array[index]) {
                 case '+':
@@ -461,9 +468,9 @@ const CacheCalculator = {
             }
             if (cacheOptions.get(array[index])) {
                 this.cache.set(equation, result);
-                console.log("Cached");
+                this.logMessage += "Cached. ";
             }
-            console.log("Without cache");
+            this.logMessage += "Without cache";
         }
         return result;
     }
@@ -570,10 +577,7 @@ function onArrayCommandClick(element) {
 }
 
 function onTextFormatClick() {
-    let formatValue = document.querySelector('input[name="wrap"]:checked').value;
-    let formatType = formatValue === 'noWrap' ? FormatType.noWrap :
-        formatValue === 'wordWrap' ? FormatType.wordWrap :
-            formatValue === 'sentenceWrap' ? FormatType.sentenceWrap : FormatType.charWrap;
+    let formatType = document.querySelector('input[name="wrap"]:checked').value;
     let source = document.getElementById('formatter-input').value;
     let dest = document.getElementById('formatter-output');
     const maxLength = Number(document.getElementById('formatter-maxlength').value);
@@ -617,6 +621,8 @@ function onCalculateClick() {
         ]);
         dest.value = cacheChecked ?
             CacheCalculator.calculate(source, cacheOptions) : StringCalculator.calculate(source);
+        let log = document.getElementById('cache-log');
+        log.value = CacheCalculator.getLog();
     } else {
         document.getElementById("calculator-input").classList.add('input--error')
     }
