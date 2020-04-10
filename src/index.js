@@ -365,11 +365,11 @@ const StringCalculator = {
 };
 
 const DateUnits = {
-    seconds: 1,
-    milliseconds: 0.001,
-    ticks: 0.0000001,
-    minutes: 60,
-    hours: 3600,
+    seconds: 1000,
+    milliseconds: 1,
+    ticks: 0.0001,
+    minutes: 60000,
+    hours: 3600000,
 };
 
 Object.freeze(DateUnits);
@@ -535,40 +535,54 @@ function setCellValues(array) {
     return array;
 }
 
+const ArrayMethods = {
+    subSumFast: 'SubSumFast',
+    subSumSlow: 'SubSumSlow',
+    min: 'Min',
+    max: 'Max',
+    median: 'Median',
+    selection: 'Selection',
+    heapSort: 'HeapSort',
+    quickSort: 'QuickSort',
+    countingSort: 'CountingSort',
+    insertionSort: 'InsertionSort',
+};
+Object.freeze(ArrayMethods);
+
 function onArrayCommandClick(element) {
     let array = getCellValues();
     if (array.length > 0) {
         let dest = document.getElementById('array-result');
         dest.value = '';
-        switch (element.value) {
-            case 'Sub Sum':
+        switch (element.getAttribute('data-value')) {
+            case ArrayMethods.subSumFast:
                 dest.value = ArrayTool.getMaxSubSumFast(array);
                 break;
-            case 'Sub Sum Slow':
+            case ArrayMethods.subSumSlow:
                 dest.value = ArrayTool.getMaxSubSumSlow(array);
                 break;
-            case 'Min':
+            case ArrayMethods.min:
                 dest.value = ArrayTool.getMin(array);
                 break;
-            case 'Max':
+            case ArrayMethods.max:
                 dest.value = ArrayTool.getMax(array);
                 break;
-            case 'Median':
+            case ArrayMethods.median:
                 dest.value = ArrayTool.getMedian(array);
                 break;
-            case 'Selection':
+            case ArrayMethods.selection:
                 dest.value = ArrayTool.getIncSequence(array);
                 break;
-            case 'Heap sort':
+            case ArrayMethods.heapSort:
                 setCellValues(ArraySorter.heapSort(array));
                 break;
-            case 'Quick sort':
+            case ArrayMethods.quickSort:
                 setCellValues(ArraySorter.quickSort(array));
                 break;
-            case 'Counting sort':
+            case ArrayMethods.countingSort:
                 setCellValues(ArraySorter.countingSort(array));
                 break;
-            case 'Insertion sort':
+            case ArrayMethods.insertionSort:
                 setCellValues(ArraySorter.insertionSort(array));
                 break;
         }
@@ -661,28 +675,7 @@ function onDateConvertClick() {
     let sourceFormat = document.getElementById("date-source-format").value;
     let targetFormat = document.getElementById("date-target-format").value;
     let isLong = document.getElementById('date-long').checked;
-    let unitValue = document.querySelector('input[name="date-format"]:checked').value;
-    let unitType;
-    switch (unitValue) {
-        case 'ticks':
-            unitType = DateUnits.ticks;
-            break;
-        case 'milliseconds':
-            unitType = DateUnits.milliseconds;
-            break;
-        case 'seconds':
-            unitType = DateUnits.seconds;
-            break;
-        case 'minutes':
-            unitType = DateUnits.minutes;
-            break;
-        case 'hours':
-            unitType = DateUnits.hours;
-            break;
-        case 'date':
-            unitType = null;
-            break;
-    }
+    let unitType = parseFloat(document.querySelector('input[name="date-format"]:checked').value);
     if (unitType) {
         dest.value = DateConverter.convertTicks(source, targetFormat, unitType);
     } else {

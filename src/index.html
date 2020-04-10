@@ -38,25 +38,25 @@
                 <input class="text-input" type="text" id="array-result"/>
             </label>
             <input type="button" class="button array__button" value="Sub Sum"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="SubSumFast"/>
             <input type="button" class="button array__button" value="Sub Sum Slow"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="SubSumSlow"/>
             <input type="button" class="button array__button" value="Min"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="Min"/>
             <input type="button" class="button array__button" value="Max"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="Max"/>
             <input type="button" class="button array__button" value="Median"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="Median"/>
             <input type="button" class="button array__button" value="Selection"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="Selection"/>
             <input type="button" class="button array__button" value="Heap sort"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="HeapSort"/>
             <input type="button" class="button array__button" value="Quick sort"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="QuickSort"/>
             <input type="button" class="button array__button" value="Counting sort"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="CountingSort"/>
             <input type="button" class="button array__button" value="Insertion sort"
-                   onclick="onArrayCommandClick(this)"/>
+                   onclick="onArrayCommandClick(this)" data-value="InsertionSort"/>
         </div>
     </div>
 </div>
@@ -80,27 +80,27 @@
             </label>
             <label class="label">
                 Date
-                <input type="radio" name="date-format" value="date" checked/>
+                <input type="radio" name="date-format" value="" checked/>
             </label>
             <label class="label">
                 Ticks
-                <input type="radio" name="date-format" value="ticks"/>
+                <input type="radio" name="date-format" value="0.0001"/>
             </label>
             <label class="label">
                 Milliseconds
-                <input type="radio" name="date-format" value="milliseconds"/>
+                <input type="radio" name="date-format" value="1"/>
             </label>
             <label class="label">
                 Seconds
-                <input type="radio" name="date-format" value="seconds"/>
+                <input type="radio" name="date-format" value="1000"/>
             </label>
             <label class="label">
                 Minutes
-                <input type="radio" name="date-format" value="minutes"/>
+                <input type="radio" name="date-format" value="60000"/>
             </label>
             <label class="label">
                 Hours
-                <input type="radio" name="date-format" value="hours"/>
+                <input type="radio" name="date-format" value="3600000"/>
             </label>
             <label class="label">
                 Use long format:
