@@ -68,43 +68,42 @@ const ArrayTool = {
 
 const ArraySorter = {
 
-    arrayLength: 0,
-
     swap: function (array, i, j) {
         let temp = array[i];
         array[i] = array[j];
         array[j] = temp;
+        return array;
     },
 
-    heapRoot: function (array, i) {
+    heapRoot: function (array, i, arrayLength) {
         let left = 2 * i + 1, right = 2 * i + 2, max = i;
 
-        if (left < this.arrayLength && array[left] > array[max]) {
+        if (left < arrayLength && array[left] > array[max]) {
             max = left;
         }
 
-        if (right < this.arrayLength && array[right] > array[max]) {
+        if (right < arrayLength && array[right] > array[max]) {
             max = right;
         }
 
         if (max !== i) {
-            this.swap(array, i, max);
+            array = this.swap(array, i, max);
             this.heapRoot(array, max);
         }
     },
 
     heapSort: function (array) {
 
-        this.arrayLength = array.length;
+        let arrayLength = array.length;
 
-        for (let i = Math.floor(this.arrayLength / 2); i >= 0; i--) {
-            this.heapRoot(array, i);
+        for (let i = Math.floor(arrayLength / 2); i >= 0; i--) {
+            this.heapRoot(array, i, arrayLength);
         }
 
         for (let i = array.length - 1; i > 0; i--) {
-            this.swap(array, 0, i);
-            this.arrayLength--;
-            this.heapRoot(array, 0);
+            array = this.swap(array, 0, i);
+            arrayLength--;
+            this.heapRoot(array, 0, arrayLength);
         }
 
         return array;
